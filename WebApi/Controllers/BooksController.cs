@@ -3,6 +3,7 @@ using Application.Features.Book.Requests.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Application.Features.Book.Dtos;
 using Application.Features.Book.Requests.Commands;
+using Application.Common.Responses;
 
 namespace WebApi.Controllers
 {
@@ -18,11 +19,17 @@ namespace WebApi.Controllers
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync()
+    public async Task<IActionResult> GetAllAsync([FromQuery] string? searchKey)
     {
-      Console.WriteLine("here");
-      var getAllRequest = new GetAllBooksQuery();
-      var response = await _mediator.Send(getAllRequest);
+      BaseResponse<List<BookDto>> response;
+      if (searchKey == null || searchKey.Equals(""))
+      {
+        response = await _mediator.Send(new GetAllBooksQuery());
+      }
+      else
+      {
+        response = await _mediator.Send(new SearchBooksQuery { SearchKey = searchKey });
+      }
       return Ok(response);
     }
 
