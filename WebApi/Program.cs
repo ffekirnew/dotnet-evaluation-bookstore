@@ -1,25 +1,34 @@
+using Persistence;
+using Application;
+
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  // Register the controllers
+  builder.Services.AddControllers();
+
+  // Services Registration
+  builder.Services
+  .ConfigureApplicationServices()
+  .ConfigurePersistenceServices(builder.Configuration);
+
+  // Add services to the container.
+  // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+  builder.Services.AddEndpointsApiExplorer();
+  builder.Services.AddSwaggerGen();
 }
 
-app.UseHttpsRedirection();
+var app = builder.Build();
+{
+  // Configure the HTTP request pipeline.
+  if (app.Environment.IsDevelopment())
+  {
+    app.UseSwagger();
+    app.UseSwaggerUI();
+  }
 
-app.UseAuthorization();
+  app.UseHttpsRedirection();
+  app.MapControllers();
 
-app.MapControllers();
+  app.Run();
+}
 
-app.Run();
